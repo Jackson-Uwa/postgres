@@ -1,0 +1,25 @@
+{
+  "name": "postgres",
+  "version": "1.0.0",
+  "description": "Learning Postgres and Sequelize",
+  "main": "index.js",
+  "scripts": {
+    "make-model": "npx sequelize-cli model:generate --name user --attributes email:string",
+    "make-seed": "npx sequelize-cli seed:generate --name user",
+    "insert-seed": "npx sequelize-cli db:seed:all",
+    "migrate": "npx sequelize-cli db:migrate",
+    "down": "npx sequelize-cli db:migrate:undo",
+    "start": "node index"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.21.3"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.4.1"
+  }
+}
