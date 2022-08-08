@@ -13,14 +13,34 @@ router.get("/", async (req, res) => {
       },
     });
   } catch (err) {
-    res.send(err);
-    console.error(err);
+    res.json({
+      status: "failed",
+      error: err.message,
+    });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findByPk(id);
+    res.json({
+      status: "success",
+      data: {
+        product,
+      },
+    });
+  } catch (err) {
+    res.json({
+      status: "failed",
+      error: err.message,
+    });
   }
 });
 
 router.post("/", async (req, res) => {
   try {
-    const product = Product.create(req.body);
+    const product = await Product.create(req.body);
     res.json({
       status: "success",
       newProduct: {
@@ -30,7 +50,45 @@ router.post("/", async (req, res) => {
   } catch (error) {
     res.json({
       status: "failed",
-      error,
+      err: error.message,
+    });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Product.update(req.body, {
+      where: {
+        id: id,
+      },
+    });
+    res.json({
+      status: "success",
+    });
+  } catch (error) {
+    res.json({
+      status: "failed",
+      err: error.message,
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Product.destroy({
+      where: {
+        id: id,
+      },
+    });
+    res.json({
+      status: "success",
+    });
+  } catch (error) {
+    res.json({
+      status: "failed",
+      err: error.message,
     });
   }
 });
