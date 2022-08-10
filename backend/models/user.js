@@ -18,6 +18,12 @@ const User = db.define(
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
+      validate: {
+        isEmail: true,
+        notEmpty: true,
+        len: [1, 255],
+        isLowercase: true,
+      },
     },
     phone: {
       type: DataTypes.NUMBER,
@@ -32,24 +38,35 @@ const User = db.define(
       allowNull: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    indexes: [{ unique: true, fields: ["email"] }],
+  }
 );
 
-// User.addHook.correctPassword = async function (
-//   candidatePassword,
-//   userPassword
-// ) {
-//   return await bcrypt.compare(candidatePassword, userPassword);
-// };
+const hasSecurePassword = function (user) {
+  if (user.password != user.confirmPassword)
+    throw new Error("Password confirmation doesn't match Password");
+};
 
-// User.beforeCreate((user, options) => {
-//   const hashedPassword = bcrypt.hash(user.password, 12);
-//   user.password = hashedPassword;
-//   user.confirmPassword = undefined;
-// });
+User.beforeCreate(function (user) {
+  if (user.password) return hasSecurePassword(user);
+});
 
-// User.beforeCreate((user, options) => {
-//   user.password === user.confirmPassword;
-// });
+User.beforeCreate(async (user) => {
+  return await bcrypt
+    .hash(user.password, 10)
+    .then((hash) => {
+      user.password = hash;
+      user.confirmPassword = hash;
+    })
+    .catch((err) => {
+      throw new Error(`${err.message}`);
+    });
+});
+
+User.prototype.correctPassword = function (password, user) {
+  return bcrypt.compare(password, user.password);
+};
 
 module.exports = User;

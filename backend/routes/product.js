@@ -1,9 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/product");
+const APIFeatures = require("../utils/APIFeatures");
 
 router.get("/", async (req, res) => {
   try {
+    // const features = new APIFeatures(Product.findAll(), req.query)
+    //   .filter()
+    //   .sort()
+    //   .fields()
+    //   .paginate();
+    // const products = await features.query;
     const products = await Product.findAll();
     res.json({
       status: "success",
